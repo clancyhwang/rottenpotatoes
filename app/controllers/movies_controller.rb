@@ -7,13 +7,59 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @sort_by = params[:sort_by]
+    @all_ratings = Movie.ratings
+    @checkbox = @all_ratings
+    if params[:ratings] != nil
+      @checkbox = []
+      if params[:ratings].is_a?(Hash)
+        params[:ratings].each_key do |rating|
+          @checkbox << rating
+        end
+      else
+
+=begin
+      elsif params[:ratings].kind_of?(Array)
+        params[:ratings].each do |rating|
+          @checkbox << rating
+        end
+=end
+      end
+    end
+
+    @sort_by = params[:sort_by] || session[:sort_by]
+
+    if params[:sort_by] != session[:sort_by]
+      session[:sort_by] = @sort_by
+    end
+    @ratings = params[:ratings] || session[:ratings]
+    if params[:ratings] != session[:ratings]
+      session[:ratings] = @ratings
+    end
+
+    if (params[:sort_by] == nil && session[:sort_by] != nil) || (params[:ratings] == nil && session[:ratings] != nil)
+      flash.keep
+      redirect_to movies_path({:sort_by => session[:sort_by], :ratings => session[:ratings]})
+    elsif params[:sort_by] == nil && session[:sort_by] != nil
+      session[:sort_by] = params[:sort_by]
+    else
+      session[:ratings] = params[:ratings]
+    end
+
+    if params[:ratings] == nil
+      params[:ratings] = session[:ratings]
+    end
+
     if @sort_by == 'Movie Title'
       @movies = Movie.order("lower(title)")
+      @movies = @movies.find_all_by_rating(@checkbox)
+
     elsif @sort_by == 'Release Date'
       @movies = Movie.order("release_date")
+      @movies = @movies.find_all_by_rating(@checkbox)
+
     else
-      @movies = Movie.all
+      @movies = Movie.order(session[:sort_by])
+      @movies = Movie.find_all_by_rating(@checkbox)
     end
 
   end
