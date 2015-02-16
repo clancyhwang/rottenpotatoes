@@ -15,14 +15,11 @@ class MoviesController < ApplicationController
         params[:ratings].each_key do |rating|
           @checkbox << rating
         end
-      else
 
-=begin
       elsif params[:ratings].kind_of?(Array)
         params[:ratings].each do |rating|
           @checkbox << rating
         end
-=end
       end
     end
 
