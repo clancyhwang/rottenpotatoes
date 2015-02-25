@@ -6,6 +6,10 @@ gem 'rails', '3.2.16'
 group :development, :test do
   gem 'sqlite3'
   gem 'ruby-debug19'
+  gem 'database_cleaner'
+  gem 'cucumber-rails', :require => false
+  gem 'rspec-rails', '~> 2.14.0'
+  gem 'simplecov'
 end
 
 
@@ -15,6 +19,9 @@ end
 
 group :assets do
   gem 'uglifier'
+  gem 'therubyracer'
+  gem 'sass-rails'
+  gem 'coffee-rails'
 end
 
 gem 'jquery-rails'
