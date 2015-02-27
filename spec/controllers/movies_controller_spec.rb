@@ -5,7 +5,23 @@ describe MoviesController do
   def valid_attributes
     {:rating =>'G', :director =>'Clint Eastwood'}
   end
+  describe "GET same_director" do
+    describe "with director" do
+      it "assigns all movies as @movies" do
+        movie = Movie.create! valid_attributes
+        get :same_director, :movie_id=> movie.id
+        assigns(:same).should eq([movie])
+      end
+    end
 
+    describe "without director" do
+      it "redirects to the homepage" do
+        movie = Movie.create!
+        get :same_director, :movie_id=> movie.id
+        response.should redirect_to movies_path
+      end
+    end
+  end
 
   describe 'add director' do
     before :each do
@@ -21,7 +37,7 @@ describe MoviesController do
 
   describe 'happy path' do
     before :each do
-      @m=mock(Movie, :title => "Star Wars", :director => "director", :id => "1")
+      @m=mock(Movie, :title => "Star Wars", :director => 'director', :id => "1")
       Movie.stub!(:find).with("1").and_return(@m)
     end
 
@@ -33,7 +49,7 @@ describe MoviesController do
       Movie.should_receive(:under_same_director).with('director').and_return(fake_results)
       get :same_director, :movie_id => "1"
     end
-    it 'should select the Similar template for rendering and make results available' do
+    it 'should select the same_director template for rendering and make results available' do
       Movie.stub!(:under_same_director).with('director').and_return(@m)
       get :same_director, :movie_id => "1"
       response.should render_template('same_director')
